@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: bookstore_postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - /root/task/data/pgdata/:/var/lib/postgresql/data
+    command: postgres -c log_statement=all
+    environment:
+      - POSTGRES_USER=bookstore_user
+      - POSTGRES_PASSWORD=bookstore_pass
+      - POSTGRES_DB=bookstore_db
+  fastapi:
+    build:
+      context: /root/task
+      dockerfile: Dockerfile
+    container_name: bookstore_fastapi
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    working_dir: /root/task
